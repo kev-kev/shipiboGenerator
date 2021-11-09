@@ -1,4 +1,6 @@
 const BOX_SIZE = 20;
+const COLORS = ["#F05D5E", "#0F7173", "#272932", "#D8A47F"];
+
 let canvas;
 function setup() {
   canvas = createCanvas(400, 400);
@@ -9,16 +11,34 @@ function draw() {
   drawGrid();
 }
 
-const handleBoxSelect = () => {
-  let x = Math.floor(mouseX / BOX_SIZE);
-  let y = Math.floor(mouseY / BOX_SIZE);
-  fill("blue");
-  rect(x * BOX_SIZE, y * BOX_SIZE, BOX_SIZE, BOX_SIZE);
-};
-
 const drawGrid = () => {
   for (let i = 0; i <= height; i += BOX_SIZE) {
     line(i, 0, i, height);
     line(0, i, width, i);
+  }
+};
+const handleBoxSelect = () => {
+  let x = Math.floor(mouseX / BOX_SIZE) * BOX_SIZE;
+  let y = Math.floor(mouseY / BOX_SIZE) * BOX_SIZE;
+  fillBox(x, y);
+};
+
+const fillBox = (x, y) => {
+  const boxColor = get(x + 1, y + 1);
+  let isFilled;
+  for (let i = 0; i < 4; i++) {
+    if (boxColor[i] > 0) {
+      isFilled = true;
+      break;
+    }
+  }
+  if (isFilled) {
+    erase();
+    rect(x, y, BOX_SIZE, BOX_SIZE);
+    noErase();
+  } else {
+    let colorIndex = Math.floor(Math.random() * COLORS.length);
+    fill(COLORS[colorIndex]);
+    rect(x, y, BOX_SIZE, BOX_SIZE);
   }
 };
