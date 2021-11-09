@@ -1,10 +1,14 @@
 const BOX_SIZE = 20;
 const COLORS = ["#F05D5E", "#0F7173", "#272932", "#D8A47F"];
 
-let canvas;
+let canvas, colorPicker;
 function setup() {
   canvas = createCanvas(400, 400);
+  canvas.parent("canvasContainer");
   canvas.mouseClicked(handleBoxSelect);
+  colorPicker = createColorPicker(
+    COLORS[Math.floor(Math.random() * COLORS.length)]
+  );
 }
 
 function draw() {
@@ -17,6 +21,7 @@ const drawGrid = () => {
     line(0, i, width, i);
   }
 };
+
 const handleBoxSelect = () => {
   let x = Math.floor(mouseX / BOX_SIZE) * BOX_SIZE;
   let y = Math.floor(mouseY / BOX_SIZE) * BOX_SIZE;
@@ -38,7 +43,7 @@ const fillBox = (x, y) => {
     noErase();
   } else {
     let colorIndex = Math.floor(Math.random() * COLORS.length);
-    fill(COLORS[colorIndex]);
+    fill(colorPicker.color());
     rect(x, y, BOX_SIZE, BOX_SIZE);
   }
 };

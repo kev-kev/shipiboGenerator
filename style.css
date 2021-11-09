@@ -2,15 +2,19 @@ html,
 body {
   margin: 0;
   padding: 0;
+  height: 100vh;
 }
 
 canvas {
   display: block;
 }
 
-body {
-  height: 100vh;
+#canvasContainer {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+input {
+  margin: 10px;
 }
