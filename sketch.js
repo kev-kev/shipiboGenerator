@@ -1,9 +1,10 @@
 const BOX_SIZE = 20;
+const NODES = [];
+const MAX_NODE_COUNT = 5;
 const BOXES_BETWEEN_NODES = 2;
 const MAX_NODE_SIZE = 7;
 const COLORS = ["#F05D5E", "#0F7173", "#272932", "#D8A47F"];
 const RAND_COLOR = COLORS[Math.floor(Math.random() * COLORS.length)];
-const NODES = [];
 
 let canvas, colorPicker;
 function setup() {
@@ -40,10 +41,15 @@ const fillBox = (x, y) => {
       break;
     }
   }
+  fillOrErase(isFilled, x, y);
+};
+
+const fillOrErase = (isFilled, x, y) => {
   if (isFilled) {
     erase();
     rect(x, y, BOX_SIZE, BOX_SIZE);
     noErase();
+    drawGrid();
   } else {
     let colorIndex = Math.floor(Math.random() * COLORS.length);
     fill(colorPicker.color());
@@ -77,8 +83,12 @@ const addToOrCreateNode = (x, y) => {
     }
   }
   if (!adjToNode) {
-    NODES.push({ boxes: [[x, y]], color: colorPicker.color().toString() });
-    fillBox(x, y);
+    if (NODES.length < MAX_NODE_COUNT) {
+      NODES.push({ boxes: [[x, y]], color: colorPicker.color().toString() });
+      fillBox(x, y);
+    } else {
+      console.log("Error: that's just too many nodes, yo");
+    }
   }
 };
 
