@@ -1,6 +1,8 @@
 const BOX_SIZE = 20;
 const BOXES_BETWEEN_NODES = 2;
+const MAX_NODE_SIZE = 7;
 const COLORS = ["#F05D5E", "#0F7173", "#272932", "#D8A47F"];
+const RAND_COLOR = COLORS[Math.floor(Math.random() * COLORS.length)];
 const NODES = [];
 
 let canvas, colorPicker;
@@ -8,8 +10,8 @@ function setup() {
   canvas = createCanvas(400, 400);
   canvas.parent("canvasContainer");
   canvas.mouseClicked(handleBoxSelect);
-  const defaultColor = COLORS[Math.floor(Math.random() * COLORS.length)];
-  colorPicker = createColorPicker(defaultColor);
+  colorPicker = createColorPicker(RAND_COLOR);
+  noLoop();
 }
 
 function draw() {
@@ -58,8 +60,15 @@ const addToOrCreateNode = (x, y) => {
       if (checkAdjBoxes([x, y], NODES[i].boxes[j])) {
         adjToNode = true;
         if (colorPicker.color().toString() == NODES[i].color) {
-          NODES[i].boxes.push([x, y]);
-          fillBox(x, y);
+          if (NODES[i].boxes.length < MAX_NODE_SIZE) {
+            NODES[i].boxes.push([x, y]);
+            fillBox(x, y);
+          } else {
+            console.log(
+              `Error: Nodes can't be larger than ${MAX_NODE_SIZE} boxes`
+            );
+          }
+
           break;
         } else {
           console.log("Error: Too close to node of a different color");
