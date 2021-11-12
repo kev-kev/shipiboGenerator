@@ -15,13 +15,16 @@ function setup() {
 }
 
 function draw() {
-  // create grid
+  drawGrid();
+}
+
+const drawGrid = () => {
   strokeWeight(2);
   for (let i = 0; i <= height; i += BOX_SIZE) {
     line(i, 0, i, height);
     line(0, i, width, i);
   }
-}
+};
 
 const handleBoxSelect = () => {
   let x = Math.floor(mouseX / BOX_SIZE) * BOX_SIZE;
