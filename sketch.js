@@ -1,10 +1,9 @@
 const BOX_SIZE = 20;
-const NODES = [];
-const MAX_NODE_COUNT = 5;
 const BOXES_BETWEEN_NODES = 2;
 const MAX_NODE_SIZE = 7;
 const COLORS = ["#F05D5E", "#0F7173", "#272932", "#D8A47F"];
 const RAND_COLOR = COLORS[Math.floor(Math.random() * COLORS.length)];
+const NODES = [];
 
 let canvas, colorPicker;
 function setup() {
@@ -20,6 +19,7 @@ function draw() {
 }
 
 const drawGrid = () => {
+  strokeWeight(2);
   for (let i = 0; i <= height; i += BOX_SIZE) {
     line(i, 0, i, height);
     line(0, i, width, i);
@@ -41,10 +41,6 @@ const fillBox = (x, y) => {
       break;
     }
   }
-  fillOrErase(isFilled, x, y);
-};
-
-const fillOrErase = (isFilled, x, y) => {
   if (isFilled) {
     erase();
     rect(x, y, BOX_SIZE, BOX_SIZE);
@@ -56,7 +52,6 @@ const fillOrErase = (isFilled, x, y) => {
     rect(x, y, BOX_SIZE, BOX_SIZE);
   }
 };
-
 const addToOrCreateNode = (x, y) => {
   let adjToNode = false;
   for (let i = 0; i < NODES.length; i++) {
@@ -65,30 +60,33 @@ const addToOrCreateNode = (x, y) => {
       if (adjToNode) break;
       if (checkAdjBoxes([x, y], NODES[i].boxes[j])) {
         adjToNode = true;
-        if (colorPicker.color().toString() == NODES[i].color) {
-          if (NODES[i].boxes.length < MAX_NODE_SIZE) {
-            NODES[i].boxes.push([x, y]);
-            fillBox(x, y);
-          } else {
-            console.log(
-              `Error: Nodes can't be larger than ${MAX_NODE_SIZE} boxes`
-            );
-          }
-
-          break;
-        } else {
-          console.log("Error: Too close to node of a different color");
-        }
+        if (checkValidNode(NODES[i], x, y)) addBoxToNode(x, y, NODES[i]);
       }
     }
   }
-  if (!adjToNode) {
-    if (NODES.length < MAX_NODE_COUNT) {
-      NODES.push({ boxes: [[x, y]], color: colorPicker.color().toString() });
-      fillBox(x, y);
-    } else {
-      console.log("Error: that's just too many nodes, yo");
-    }
+  if (!adjToNode) createNode(x, y);
+};
+
+const createNode = (x, y) => {
+  NODES.push({ boxes: [[x, y]], color: colorPicker.color().toString() });
+  fillBox(x, y);
+};
+
+const addBoxToNode = (x, y, node) => {
+  node.boxes.push([x, y]);
+  fillBox(x, y);
+};
+
+const checkValidNode = (node, x, y) => {
+  if (colorPicker.color().toString() !== node.color) {
+    console.log("Error: Too close to node of a different color");
+    return false;
+  }
+  if (node.boxes.length < MAX_NODE_SIZE) {
+    return true;
+  } else {
+    console.log(`Error: Nodes can't be larger than ${MAX_NODE_SIZE} boxes`);
+    return false;
   }
 };
 
