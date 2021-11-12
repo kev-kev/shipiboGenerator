@@ -15,43 +15,39 @@ function setup() {
 }
 
 function draw() {
-  drawGrid();
-}
-
-const drawGrid = () => {
+  // create grid
   strokeWeight(2);
   for (let i = 0; i <= height; i += BOX_SIZE) {
     line(i, 0, i, height);
     line(0, i, width, i);
   }
-};
+}
 
 const handleBoxSelect = () => {
   let x = Math.floor(mouseX / BOX_SIZE) * BOX_SIZE;
   let y = Math.floor(mouseY / BOX_SIZE) * BOX_SIZE;
-  addToOrCreateNode(x, y);
+  checkIfFilledBox(x, y) ? deleteBoxFromNode(x, y) : addToOrCreateNode(x, y);
+};
+
+const checkIfFilledBox = (x, y) => {
+  const boxColor = get(x + 1, y + 1);
+  for (let i = 0; i < 4; i++) {
+    if (boxColor[i] > 0) return true;
+  }
 };
 
 const fillBox = (x, y) => {
-  const boxColor = get(x + 1, y + 1);
-  let isFilled;
-  for (let i = 0; i < 4; i++) {
-    if (boxColor[i] > 0) {
-      isFilled = true;
-      break;
-    }
-  }
-  if (isFilled) {
-    erase();
-    rect(x, y, BOX_SIZE, BOX_SIZE);
-    noErase();
-    drawGrid();
-  } else {
-    let colorIndex = Math.floor(Math.random() * COLORS.length);
-    fill(colorPicker.color());
-    rect(x, y, BOX_SIZE, BOX_SIZE);
-  }
+  fill(colorPicker.color());
+  rect(x, y, BOX_SIZE, BOX_SIZE);
 };
+
+const eraseBox = (x, y) => {
+  erase();
+  rect(x, y, BOX_SIZE, BOX_SIZE);
+  noErase();
+  drawGrid();
+};
+
 const addToOrCreateNode = (x, y) => {
   let adjToNode = false;
   for (let i = 0; i < NODES.length; i++) {
@@ -77,7 +73,23 @@ const addBoxToNode = (x, y, node) => {
   fillBox(x, y);
 };
 
-const checkValidNode = (node, x, y) => {
+const deleteBoxFromNode = (x, y) => {
+  for (let i = 0; i < NODES.length; i++) {
+    for (let j = 0; j < NODES[i].boxes.length; j++) {
+      if (NODES[i].boxes[j][0] === x && NODES[i].boxes[j][1] === y) {
+        eraseBox(x, y);
+        if (NODES[i].boxes.length === 1) {
+          NODES.splice(i, 1);
+          break;
+        }
+        NODES[i].boxes.splice(j, 1);
+        break;
+      }
+    }
+  }
+};
+
+const checkValidNode = (node) => {
   if (colorPicker.color().toString() !== node.color) {
     console.log("Error: Too close to node of a different color");
     return false;
