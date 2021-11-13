@@ -58,6 +58,7 @@ const addToOrCreateNode = (x, y) => {
     for (let j = 0; j < NODES[i].boxes.length; j++) {
       if (adjToNode) break;
       if (checkAdjBoxes([x, y], NODES[i].boxes[j])) {
+        // selected box is touching a node
         adjToNode = true;
         if (checkValidNode(NODES[i], x, y)) addBoxToNode(x, y, NODES[i]);
       }
@@ -109,6 +110,9 @@ const checkAdjBoxes = (box1, box2) => {
   let distance = 0;
   distance += Math.abs(box1[0] - box2[0]);
   distance += Math.abs(box1[1] - box2[1]);
-  if (distance <= BOX_SIZE * BOXES_BETWEEN_NODES) return true;
+  if (distance == BOX_SIZE) {
+    console.log("adjacent");
+    return true;
+  }
   return false;
 };
